@@ -1,0 +1,105 @@
+# 📊 Modelo de Datos del ERP  
+
+## 🔹 **Módulos Principales de Nuestro ERP**  
+
+| Módulo       | Funcionalidad |
+|-------------|--------------|
+| **Pacientes** | Registro de pacientes, historial médico, datos de contacto. |
+| **Citas** | Agendamiento, disponibilidad de doctores. |
+| **Doctores** | Registro de médicos, especialidades y horarios. |
+| **Facturación** | Control de pagos, facturas y reportes financieros. |
+| **Inventarios** | Administración de insumos médicos, medicamentos y compras. |
+
+---
+
+### **Enfoque Especial: Módulo de Inventarios 📦**  
+
+📌 **¿Por qué es crucial en un ERP de salud?**  
+
+- **Control de medicamentos e insumos médicos** (ej. guantes, jeringas, soluciones intravenosas).  
+- **Relación con facturación y proveedores**.  
+- **Optimización de costos** con reportes de uso y predicción de compras.  
+- **Seguridad y trazabilidad** en la administración de medicamentos controlados.  
+
+📌 **Relaciones clave del módulo de Inventarios**  
+🔹 **Doctores** → Consumen insumos en procedimientos médicos.  
+🔹 **Pacientes** → Se les administran medicamentos e insumos.  
+🔹 **Facturación** → Cada insumo utilizado debe reflejarse en la cuenta del paciente.  
+🔹 **Proveedores** → Se encargan de suministrar insumos y medicamentos.  
+
+📌 **Ejemplo de Uso en la Clínica**  
+1️⃣ Se atiende a un paciente y se usa un medicamento.  
+2️⃣ El medicamento se descuenta del inventario.  
+3️⃣ Se genera un cobro en la facturación.  
+4️⃣ Si el stock es bajo, se genera automáticamente una orden de compra.  
+
+---
+
+## 🔹 **Tablas Principales**  
+
+1️⃣ **Pacientes** → Almacena datos de pacientes.  
+2️⃣ **Doctores** → Registro de médicos y especialidades.  
+3️⃣ **Citas** → Maneja los turnos de consulta.  
+4️⃣ **Facturación** → Registra pagos y transacciones.  
+5️⃣ **Inventario** → Control de suministros médicos.  
+
+## **Definiendo y Refinando el Modelo de Datos Inicial**  
+
+
+📌 **Tablas Clave del ERP**  
+
+```sql
+CREATE TABLE pacientes (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    fecha_nacimiento DATE NOT NULL
+);
+
+CREATE TABLE doctores (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    especialidad VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE citas (
+    id SERIAL PRIMARY KEY,
+    paciente_id INT REFERENCES pacientes(id),
+    doctor_id INT REFERENCES doctores(id),
+    fecha TIMESTAMP NOT NULL
+);
+
+CREATE TABLE facturas (
+    id SERIAL PRIMARY KEY,
+    paciente_id INT REFERENCES pacientes(id),
+    fecha TIMESTAMP DEFAULT current_timestamp,
+    total DECIMAL(10,2) CHECK (total >= 0)
+);
+
+CREATE TABLE inventarios (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    cantidad INT CHECK (cantidad >= 0),
+    precio DECIMAL(10,2) CHECK (precio >= 0)
+);
+
+CREATE TABLE movimientos_inventario (
+    id SERIAL PRIMARY KEY,
+    inventario_id INT REFERENCES inventarios(id),
+    cantidad INT NOT NULL,
+    tipo_movimiento VARCHAR(50) CHECK (tipo_movimiento IN ('entrada', 'salida')),
+    fecha TIMESTAMP DEFAULT current_timestamp
+);
+```
+
+### **Refinamiento del Modelo**  
+1️⃣ ¿Cómo podríamos manejar múltiples sucursales en este modelo?  
+2️⃣ ¿Qué ocurre si un paciente no paga una factura?  
+3️⃣ ¿Deberíamos registrar qué doctor administra un medicamento?  
+
+📌 **Actividades**:  
+✅ Revisar el modelo propuesto y sugerir cambios.  
+✅ Crear una consulta SQL para obtener el inventario con menos stock.  
+✅ Plantear cómo automatizar la reposición de insumos.  
+
+---
