@@ -59,27 +59,6 @@ git config --global user.email "tuemail@example.com"
 git add .
 git commit -m "Inicialización del repositorio con estructura base"
 git push origin main
-``` 
-
-
-
-📌 **Explicación del Modelo**  
-🔹 `inventarios`: Almacena los productos médicos disponibles.  
-🔹 `movimientos_inventario`: Registra **entradas y salidas** de productos.  
-🔹 `citas`: Relaciona **pacientes con doctores**.  
-🔹 `facturas`: Conecta **pacientes con pagos y consumos de insumos**.  
-
-📌 **Ejemplo de Consulta**:  
-Obtener los **productos más usados en la clínica**.  
-
-```sql
-SELECT i.nombre, SUM(m.cantidad) AS total_usado
-FROM movimientos_inventario m
-JOIN inventarios i ON m.inventario_id = i.id
-WHERE m.tipo_movimiento = 'salida'
-GROUP BY i.nombre
-ORDER BY total_usado DESC
-LIMIT 5;
 ```
 
 ---

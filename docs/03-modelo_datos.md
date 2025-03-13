@@ -92,7 +92,62 @@ CREATE TABLE movimientos_inventario (
 );
 ```
 
-### **Refinamiento del Modelo**  
+📌 **Explicación del Modelo**  
+🔹 `inventarios`: Almacena los productos médicos disponibles.  
+🔹 `movimientos_inventario`: Registra **entradas y salidas** de productos.  
+🔹 `citas`: Relaciona **pacientes con doctores**.  
+🔹 `facturas`: Conecta **pacientes con pagos y consumos de insumos**.  
+
+📌 **Ejemplo de Consulta**:  
+Obtener los **productos más usados en la clínica**.  
+
+```sql
+SELECT i.nombre, SUM(m.cantidad) AS total_usado
+FROM movimientos_inventario m
+JOIN inventarios i ON m.inventario_id = i.id
+WHERE m.tipo_movimiento = 'salida'
+GROUP BY i.nombre
+ORDER BY total_usado DESC
+LIMIT 5;
+```
+📌 **Explicación del Modelo**  
+🔹 `inventarios`: Almacena los productos médicos disponibles.  
+🔹 `movimientos_inventario`: Registra **entradas y salidas** de productos.  
+🔹 `citas`: Relaciona **pacientes con doctores**.  
+🔹 `facturas`: Conecta **pacientes con pagos y consumos de insumos**.  
+
+📌 **Ejemplo de Consulta**:  
+Obtener los **productos más usados en la clínica**.  
+
+```sql
+SELECT i.nombre, SUM(m.cantidad) AS total_usado
+FROM movimientos_inventario m
+JOIN inventarios i ON m.inventario_id = i.id
+WHERE m.tipo_movimiento = 'salida'
+GROUP BY i.nombre
+ORDER BY total_usado DESC
+LIMIT 5;
+```
+📌 **Explicación del Modelo**  
+🔹 `inventarios`: Almacena los productos médicos disponibles.  
+🔹 `movimientos_inventario`: Registra **entradas y salidas** de productos.  
+🔹 `citas`: Relaciona **pacientes con doctores**.  
+🔹 `facturas`: Conecta **pacientes con pagos y consumos de insumos**.  
+
+📌 **Ejemplo de Consulta**:  
+Obtener los **productos más usados en la clínica**.  
+
+```sql
+SELECT i.nombre, SUM(m.cantidad) AS total_usado
+FROM movimientos_inventario m
+JOIN inventarios i ON m.inventario_id = i.id
+WHERE m.tipo_movimiento = 'salida'
+GROUP BY i.nombre
+ORDER BY total_usado DESC
+LIMIT 5;
+```
+
+###**Refinamiento del Modelo**
 1️⃣ ¿Cómo podríamos manejar múltiples sucursales en este modelo?  
 2️⃣ ¿Qué ocurre si un paciente no paga una factura?  
 3️⃣ ¿Deberíamos registrar qué doctor administra un medicamento?  
