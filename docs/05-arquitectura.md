@@ -1,6 +1,6 @@
 # Tipos de arquitecturas de software
 
-En el desarrollo de sistemas ERP, existen diferentes tipos de arquitecturas de software que se pueden utilizar para su implementación. A continuación, se describen los tipos de arquitecturas más comunes:
+En el desarrollo de sistemas, existen diferentes tipos de arquitecturas de software que se pueden utilizar para su implementación. A continuación, se describen los tipos de arquitecturas más comunes:
 
 ## Arquitectura monolítica
 
