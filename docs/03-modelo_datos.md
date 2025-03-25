@@ -159,93 +159,177 @@ LIMIT 5;
 
 ---
 
-### Modelo de datos actualizado 20/03/2025
+### Modelo de datos actualizado 24/03/2025
+
+Si incluimos el manejo de especialidades médicas como una entidad separada, el modelo completo quedaría de la siguiente manera, asegurando que cada doctor pueda tener múltiples especialidades y que cada especialidad pueda estar asignada a múltiples doctores.  
+
+---
+
+## 📌 **Modelo de Datos Completo con Especialidades Médicas**
+
+Este modelo mantiene la estructura original e introduce una mejor normalización en la relación entre doctores y sus especialidades.
+
+### **🏥 Tabla de Sucursales**
+
+Cada doctor e inventario pertenece a una sucursal.  
 
 ```sql
--- Tabla de Sucursales
 CREATE TABLE sucursales (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     direccion TEXT NOT NULL
 );
+```
 
--- Tabla de Pacientes
+### **👨‍⚕️ Tabla de Doctores**
+
+Se elimina la columna `especialidad` porque ahora se gestiona en la tabla `doctor_especialidad`.  
+
+```sql
+CREATE TABLE doctores (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    sucursal_id INT REFERENCES sucursales(id)
+);
+```
+
+### **📋 Tabla de Especialidades**
+
+Lista todas las especialidades médicas disponibles.  
+
+```sql
+CREATE TABLE especialidades (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE
+);
+```
+
+### **🔗 Relación Doctor - Especialidad**
+
+Define la relación muchos a muchos entre `doctores` y `especialidades`.  
+
+```sql
+CREATE TABLE doctor_especialidad (
+    doctor_id INT REFERENCES doctores(id) ON DELETE CASCADE,
+    especialidad_id INT REFERENCES especialidades(id) ON DELETE CASCADE,
+    PRIMARY KEY (doctor_id, especialidad_id)
+);
+```
+
+---
+
+### **🧑‍⚕️ Tabla de Pacientes**
+
+```sql
 CREATE TABLE pacientes (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
     fecha_nacimiento DATE NOT NULL
 );
+```
 
--- Tabla de Doctores
-CREATE TABLE doctores (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    especialidad VARCHAR(100) NOT NULL,
-    sucursal_id INT REFERENCES sucursales(id)
-);
+### **📅 Tabla de Citas**
 
--- Tabla de Citas
+```sql
 CREATE TABLE citas (
     id SERIAL PRIMARY KEY,
-    paciente_id INT REFERENCES pacientes(id),
-    doctor_id INT REFERENCES doctores(id),
+    paciente_id INT REFERENCES pacientes(id) ON DELETE CASCADE,
+    doctor_id INT REFERENCES doctores(id) ON DELETE SET NULL,
     fecha TIMESTAMP NOT NULL
 );
+```
 
--- Tabla de Facturación
+---
+
+### **💰 Tabla de Facturación**
+
+```sql
 CREATE TABLE facturas (
     id SERIAL PRIMARY KEY,
-    paciente_id INT REFERENCES pacientes(id),
+    paciente_id INT REFERENCES pacientes(id) ON DELETE CASCADE,
     fecha TIMESTAMP DEFAULT current_timestamp,
     total DECIMAL(10,2) CHECK (total >= 0),
     estado_pago VARCHAR(50) CHECK (estado_pago IN ('pendiente', 'pagado')) DEFAULT 'pendiente'
 );
+```
 
--- Tabla de Inventarios
+---
+
+### **📦 Tabla de Inventarios**
+
+```sql
 CREATE TABLE inventarios (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     cantidad INT CHECK (cantidad >= 0),
     precio DECIMAL(10,2) CHECK (precio >= 0),
     controlado BOOLEAN DEFAULT FALSE,
-    sucursal_id INT REFERENCES sucursales(id)
+    sucursal_id INT REFERENCES sucursales(id) ON DELETE CASCADE
 );
+```
 
--- Movimientos de Inventario
+### **📊 Movimientos de Inventario**
+
+```sql
 CREATE TABLE movimientos_inventario (
     id SERIAL PRIMARY KEY,
-    inventario_id INT REFERENCES inventarios(id),
+    inventario_id INT REFERENCES inventarios(id) ON DELETE CASCADE,
     cantidad INT NOT NULL,
     tipo_movimiento VARCHAR(50) CHECK (tipo_movimiento IN ('entrada', 'salida')),
     fecha TIMESTAMP DEFAULT current_timestamp
 );
+```
 
--- Tabla de Recetas Médicas
+---
+
+### **💊 Tabla de Recetas Médicas**
+
+```sql
 CREATE TABLE recetas (
     id SERIAL PRIMARY KEY,
-    paciente_id INT REFERENCES pacientes(id),
-    doctor_id INT REFERENCES doctores(id),
+    paciente_id INT REFERENCES pacientes(id) ON DELETE CASCADE,
+    doctor_id INT REFERENCES doctores(id) ON DELETE SET NULL,
     fecha TIMESTAMP DEFAULT current_timestamp
 );
+```
 
--- Tabla de Historia Clínica
+### **📑 Tabla de Historia Clínica**
+
+```sql
 CREATE TABLE historia_clinica (
     id SERIAL PRIMARY KEY,
-    paciente_id INT REFERENCES pacientes(id),
-    doctor_id INT REFERENCES doctores(id),
+    paciente_id INT REFERENCES pacientes(id) ON DELETE CASCADE,
+    doctor_id INT REFERENCES doctores(id) ON DELETE SET NULL,
     fecha TIMESTAMP DEFAULT current_timestamp,
     diagnostico TEXT,
     tratamiento TEXT
 );
+```
 
--- Registro de Administración de Medicamentos
+---
+
+### **💉 Administración de Medicamentos**
+
+```sql
 CREATE TABLE administracion_medicamentos (
     id SERIAL PRIMARY KEY,
-    receta_id INT REFERENCES recetas(id),
-    inventario_id INT REFERENCES inventarios(id),
-    doctor_id INT REFERENCES doctores(id),
+    receta_id INT REFERENCES recetas(id) ON DELETE CASCADE,
+    inventario_id INT REFERENCES inventarios(id) ON DELETE SET NULL,
+    doctor_id INT REFERENCES doctores(id) ON DELETE SET NULL,
     fecha TIMESTAMP DEFAULT current_timestamp,
     cantidad INT CHECK (cantidad > 0)
 );
 ```
+
+---
+
+## 🔥 **Beneficios de esta Implementación**
+
+✅ **Doctores pueden tener múltiples especialidades.**  
+✅ **Especialidades pueden asignarse a múltiples doctores.**  
+✅ **Se mantiene la trazabilidad de medicamentos, citas y facturación.**  
+✅ **Se añaden restricciones para evitar datos huérfanos (`ON DELETE CASCADE` y `ON DELETE SET NULL`).**  
+✅ **El sistema ahora está más modular y escalable.**  
+
+---
