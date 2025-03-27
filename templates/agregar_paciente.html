@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Paciente</title>
+</head>
+<body>
+    <h1>Agregar Paciente</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}  <!-- Protección CSRF -->
+        <p>
+            {{ form.nombre.label }} <br>
+            {{ form.nombre(size=30) }}
+        </p>
+        <p>
+            {{ form.apellido.label }} <br>
+            {{ form.apellido(size=30) }}
+        </p>
+        <p>
+            {{ form.fecha_nacimiento.label }} <br>
+            {{ form.fecha_nacimiento() }}
+        </p>
+        <p>{{ form.enviar() }}</p>
+    </form>
+</body>
+</html>

@@ -1,19 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pacientes</title>
+    <title>Lista de Pacientes</title>
 </head>
 
 <body>
     <h1>Lista de Pacientes</h1>
-    <ul>
-        {% for paciente in pacientes %}
-        <li>{{ paciente.nombre }} {{ paciente.apellido }}</li>
-        {% endfor %}
-    </ul>
+    <a href="{{ url_for('agregar_paciente') }}">Agregar Nuevo Paciente</a>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Fecha de Nacimiento</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for paciente in pacientes %}
+            <tr>
+                <td>{{ paciente.id }}</td>
+                <td>{{ paciente.nombre }}</td>
+                <td>{{ paciente.apellido }}</td>
+                <td>{{ paciente.fecha_nacimiento }}</td>
+                <td>
+                    <a href="{{ url_for('editar_paciente', id=paciente.id) }}">Editar</a> |
+                    <a href="{{ url_for('eliminar_paciente', id=paciente.id) }}"
+                        onclick="return confirm('¿Seguro que deseas eliminar este paciente?')">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 
 </html>
