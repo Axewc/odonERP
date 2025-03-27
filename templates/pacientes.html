@@ -29,8 +29,9 @@
                 <td>{{ paciente.fecha_nacimiento }}</td>
                 <td>
                     <a href="{{ url_for('editar_paciente', id=paciente.id) }}">Editar</a> |
-                    <a href="{{ url_for('eliminar_paciente', id=paciente.id) }}"
-                        onclick="return confirm('¿Seguro que deseas eliminar este paciente?')">Eliminar</a>
+                    <form action="{{ url_for('eliminar_paciente', id=paciente.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar este paciente?')">Eliminar</button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}
